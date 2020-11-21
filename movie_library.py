@@ -40,6 +40,11 @@ class Series(Movie):
 
 
 def fake_movie_library(how_many_items=100):
+    '''
+    a function that adds fake Movie or Series objects to the movie library
+    :param how_many_items: int
+    :return: list
+    '''
     step = 1
     fake = Faker(['pl_PL', 'en_US'])
     my_genre = [
@@ -105,7 +110,7 @@ def get_series(movies_library_list):
     for item in movies_library_list:
         if isinstance(item, Series) is True:
             series_list.append(item)
-    return sorted(series_list, key=lambda series: series.title)
+    return sorted(series_list, key=lambda _series: _series.title)
 
 
 def search(title, movies_library_list):
@@ -144,19 +149,34 @@ def run_generate_views(movie_library_list):
         step += 1
 
 
-def top_titles(movies_library_list, how_many_titles):
-    _sorted = sorted(movies_library_list, key=lambda movie: movie.views, reverse=True)
+def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
+    '''
+    A function that will return a selected number of the most popular titles from the library (content_type=None).
+    If content_type=1, this function returns the most popular movies.
+    If content_type=2, the function returns the most popular series.
+    :param movies_library_list: list
+    :param how_many_titles: int
+    :param content_type: None, 1, 2
+    :return: <class 'NoneType'>
+    '''
+    if content_type == 1:
+        list_to_sorted = get_movies(movies_library_list)
+    elif content_type == 2:
+        list_to_sorted = get_series(movies_library_list)
+    else:
+        list_to_sorted = movies_library_list
+    _sorted = sorted(list_to_sorted, key=lambda movie: movie.views, reverse=True)
     print(f'  Top {how_many_titles} Titles:')
-    for index in range(how_many_titles):
-        print(f'  {index+1}. {_sorted[index]}, views {_sorted[index].views}')
+    try:
+        for index in range(how_many_titles):
+            print(f'  {index+1}. {_sorted[index]}, views {_sorted[index].views}')
+    except IndexError:
+        print(f"  We only have {len(_sorted)} titles in the library.")
 
 
 movie_library = fake_movie_library(50)
 
 run_generate_views(movie_library)
-top_titles(movie_library, 7)
+top_titles(movie_library, how_many_titles=10, content_type=1)
 
-movies = get_movies(movie_library)
-series = get_series(movie_library)
-for serie in series:
-    print(serie)
+
