@@ -1,6 +1,5 @@
 import random
 from faker import Faker
-from faker.providers import lorem
 
 
 class Movie:
@@ -41,11 +40,6 @@ class Series(Movie):
 
 
 def fake_movie_library(how_many_items=100):
-    '''
-    generates a list of fakes objects in <class '__main__.Movie'> or <class '__main__.Series'>
-    :param how_many_items: int
-    :return: list
-    '''
     step = 1
     fake = Faker(['pl_PL', 'en_US'])
     my_genre = [
@@ -72,11 +66,10 @@ def fake_movie_library(how_many_items=100):
                 episodes -= ((episodes + year) - 2020)
             genre = fake.sentence(ext_word_list=my_genre, nb_words=1)
             for season in range(1, seasons+1):
-                if step <= how_many_items:
-                    break
-                else:
-
-                    for episode in range(1, episodes+1):
+                for episode in range(1, episodes+1):
+                    if step >= how_many_items:
+                        break
+                    else:
                         _movie_library.append(Series(
                             episode=episode,
                             season=season,
@@ -141,12 +134,12 @@ def generate_views(movie_library_list):
 
 def run_generate_views(movie_library_list):
     '''
-    runs functions generate_vievs 10 times
+    runs functions generate_vievs 200 times
     :param movie_library_list: list
     :return: <class 'NoneType'>
     '''
     step = 0
-    while step < 10:
+    while step < 200:
         generate_views(movie_library_list)
         step += 1
 
@@ -158,12 +151,12 @@ def top_titles(movies_library_list, how_many_titles):
         print(f'  {index+1}. {_sorted[index]}, views {_sorted[index].views}')
 
 
-movie_library = [
-    Movie('Funny Games', 2004, "thriller"),
-    Series(1, 1, title='Alf', publish_year=1984, genre='comedy'),
-    Movie('Team America', 2002, 'comedy'),
-    Movie('Amelia', 1997, 'comedy')
-]
+movie_library = fake_movie_library(50)
 
 run_generate_views(movie_library)
-top_titles(movie_library, 3)
+top_titles(movie_library, 7)
+
+movies = get_movies(movie_library)
+series = get_series(movie_library)
+for serie in series:
+    print(serie)
