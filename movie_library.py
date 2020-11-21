@@ -1,4 +1,6 @@
 import random
+from faker import Faker
+from faker.providers import lorem
 
 
 class Movie:
@@ -38,6 +40,55 @@ class Series(Movie):
                f'publish_year={self.publish_year}, genre={self.genre}, views={self.views})'
 
 
+def fake_movie_library(how_many_items=100):
+    '''
+    generates a list of fakes objects in <class '__main__.Movie'> or <class '__main__.Series'>
+    :param how_many_items: int
+    :return: list
+    '''
+    step = 1
+    fake = Faker(['pl_PL', 'en_US'])
+    my_genre = [
+        'comedy', 'thriller', 'western', 'spy film', 'sport film', 'silent film', 'science fiction film', 'parody',
+        'musical', 'remake', 'horror', 'melodrama', 'historical', 'erotic', 'drama', 'action', 'romantic comedy',
+        'comedy drama', 'black comedy', 'cartoon', 'cabaret', 'biographical'
+    ]
+    _movie_library = []
+    while step <= how_many_items:
+        selector = random.randint(0, 1)
+        if selector == 1:
+            _movie_library.append(Movie(
+                title=fake.sentence(nb_words=3),
+                publish_year=random.randint(1960, 2020),
+                genre=fake.sentence(ext_word_list=my_genre, nb_words=1)
+            ))
+            step += 1
+        elif selector == 0:
+            episodes = random.randint(1, 12)
+            seasons = random.randint(1, 3)
+            title = fake.sentence(nb_words=3)
+            year = random.randint(1960, 2020)
+            if episodes + year > 2020:
+                episodes -= ((episodes + year) - 2020)
+            genre = fake.sentence(ext_word_list=my_genre, nb_words=1)
+            for season in range(1, seasons+1):
+                if step <= how_many_items:
+                    break
+                else:
+
+                    for episode in range(1, episodes+1):
+                        _movie_library.append(Series(
+                            episode=episode,
+                            season=season,
+                            title=title,
+                            publish_year=year,
+                            genre=genre
+                        ))
+                        year += 1
+                        step += 1
+    return _movie_library
+
+
 def get_movies(movies_library_list):
     '''
     a function that filters the movies_library_list and returns a sorted list of movies
@@ -69,7 +120,7 @@ def search(title, movies_library_list):
     function that searches for movies or series by title
     :param title: str
     :param movies_library_list: list
-    :return: object: <class__main__Movie> or <class__main__Series>
+    :return: object: <class '__main__.Movie'> or <class '__main__.Series'>
     '''
     for item in movies_library_list:
         if item.title.lower() == title.lower():
@@ -81,7 +132,7 @@ def generate_views(movie_library_list):
     a function that randomly selects an item from the library and then adds a random (ranging from 1 to 100)
     number of plays
     :param movie_library_list: list
-    :return: <NoneType>
+    :return: <class 'NoneType'>
     '''
     index = random.randint(0, len(movie_library_list)-1)
     views = random.randint(0, 100)
@@ -92,7 +143,7 @@ def run_generate_views(movie_library_list):
     '''
     runs functions generate_vievs 10 times
     :param movie_library_list: list
-    :return: <NoneType>
+    :return: <class 'NoneType'>
     '''
     step = 0
     while step < 10:
