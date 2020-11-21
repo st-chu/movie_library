@@ -171,12 +171,11 @@ def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
         for index in range(how_many_titles):
             print(f'  {index+1}. {_sorted[index]}, views {_sorted[index].views}')
     except IndexError:
-        print(f"  We only have {len(_sorted)} titles in the library.")
+        print(f" \n We only have {len(_sorted)} titles in the library.")
 
 
 movie_library = fake_movie_library(50)
 
 run_generate_views(movie_library)
-top_titles(movie_library, 15, 2)
-help(top_titles)
+top_titles(movie_library, 15, 1)
 
