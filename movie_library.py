@@ -174,7 +174,25 @@ def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
         print(f"  We only have {len(_sorted)} titles in the library.")
 
 
-movie_library = fake_movie_library(5)
+def add_season_to_movie_library(movie_library_list, title, year, genre, episodes, season):
+    '''
+    adds a full season to the movie library
+    :param movie_library_list: list
+    :param title: str
+    :param year: int
+    :param genre: str
+    :param episodes: int
+    :param season: int
+    :return: list
+    '''
+    for episode in range(1, episodes+1):
+        movie_library_list.append(Series(title=title, publish_year=year, genre=genre, season=season, episode=episode))
+    return movie_library_list
+
+
+movie_library = []
+
+fake_movie_library(movie_library, 5)
 
 run_generate_views(movie_library)
 print(movie_library)
