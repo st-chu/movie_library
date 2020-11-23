@@ -1,5 +1,6 @@
 import random
 from faker import Faker
+import datetime
 
 
 class Movie:
@@ -10,7 +11,7 @@ class Movie:
         self.views = 0
 
     def __repr__(self):
-        return f'Movie(title={self.title}, publish_year={self.publish_year}, genre={self.genre}, '\
+        return f'Movie(title={self.title}, publish_year={self.publish_year}, genre={self.genre}, ' \
                f'views={self.views})'
 
     def __str__(self):
@@ -88,8 +89,8 @@ def fake_movie_library(movie_library_list, how_many_items=100):
             if episodes + year > 2020:
                 episodes -= ((episodes + year) - 2020)
             genre = fake.sentence(ext_word_list=my_genre, nb_words=1)
-            for season in range(1, seasons+1):
-                for episode in range(1, episodes+1):
+            for season in range(1, seasons + 1):
+                for episode in range(1, episodes + 1):
                     if step >= how_many_items:
                         break
                     else:
@@ -150,7 +151,7 @@ def generate_views(movie_library_list):
     :param movie_library_list: list
     :return: <class 'NoneType'>
     '''
-    index = random.randint(0, len(movie_library_list)-1)
+    index = random.randint(0, len(movie_library_list) - 1)
     views = random.randint(0, 100)
     movie_library_list[index].play(views)
 
@@ -184,10 +185,10 @@ def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
     else:
         list_to_sorted = movies_library_list
     _sorted = sorted(list_to_sorted, key=lambda movie: movie.views, reverse=True)
-    print(f'  Top {how_many_titles} Titles:')
+    #print(f'  Top {how_many_titles} Titles:')
     try:
         for index in range(how_many_titles):
-            print(f'  {index+1}. {_sorted[index]}, views {_sorted[index].views}')
+            print(f'  {index + 1}. {_sorted[index]}, views {_sorted[index].views}')
     except IndexError:
         print(f"  We only have {len(_sorted)} titles in the library.")
 
@@ -203,15 +204,30 @@ def add_season_to_movie_library(movie_library_list, title, year, genre, episodes
     :param season: int
     :return: list
     '''
-    for episode in range(1, episodes+1):
+    for episode in range(1, episodes + 1):
         movie_library_list.append(Series(title=title, publish_year=year, genre=genre, season=season, episode=episode))
     return movie_library_list
 
 
-movie_library = []
+if __name__ == '__main__':
+    print(' Biblioteka Filmów '.center(50, '*'))
 
-fake_movie_library(movie_library, 5)
+    # filling the library with content
+    movie_library = []
+    fake_movie_library(movie_library)
+    add_season_to_movie_library(movie_library, 'Alf', 1984, 'comedy', 5, 1)
+    add_season_to_movie_library(movie_library, 'Alf', 1984, 'comedy', 2, 2)
+    add_season_to_movie_library(movie_library, 'Gumisie', 1989, 'cartoon', 20, 1)
+    add_season_to_movie_library(movie_library, 'Gumisie', 1989, 'cartoon', 15, 2)
 
-run_generate_views(movie_library)
-print(movie_library)
+    # generate views with the generate_views function
+    run_generate_views(movie_library)
 
+    # print top 3 titles from movie_library, print the best movie, print the best series
+    date = datetime.date.today()
+    print(f'\nNajpopularniejsze filmy i seriale dnia {date.day}.{date.month}.{date.year}')
+    top_titles(movie_library, 3)
+    print(f'\nNajpopularniejszy film dnia {date.day}.{date.month}.{date.year}')
+    top_titles(movie_library, 1, 1)
+    print(f'\nNajpopularniejszy serial dnia {date.day}.{date.month}.{date.year}')
+    top_titles(movie_library, 1, 2)
