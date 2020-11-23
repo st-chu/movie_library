@@ -26,16 +26,34 @@ class Movie:
 
 
 class Series(Movie):
+    counter = {}
+
     def __init__(self, episode, season, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.episode = episode
         self.season = season
+        selector = False
+        for key, value in Series.counter.items():
+            if self.title == key:
+                selector = True
+        if selector is True:
+            Series.counter[self.title] = Series.counter[self.title] + 1
+        else:
+            Series.counter[self.title] = 1
+
+    @classmethod
+    def titles_count(cls):
+        return cls.counter
+
+    def how_many_episodes(self):
+        how_many = self.counter[self.title]
+        return how_many
 
     def __str__(self):
         return f'{self.title} S{self.season:02d}E{self.episode:02d}'
 
     def __repr__(self):
-        return f'Series(episode={self.episode}, season={self.season}, title={self.title}, '\
+        return f'Series(episode={self.episode}, season={self.season}, title={self.title}, ' \
                f'publish_year={self.publish_year}, genre={self.genre}, views={self.views})'
 
 
