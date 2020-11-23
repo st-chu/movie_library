@@ -26,22 +26,41 @@ class Movie:
 
 
 class Series(Movie):
+    counter = {}
+
     def __init__(self, episode, season, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.episode = episode
         self.season = season
+        selector = False
+        for key, value in Series.counter.items():
+            if self.title == key:
+                selector = True
+        if selector is True:
+            Series.counter[self.title] = Series.counter[self.title] + 1
+        else:
+            Series.counter[self.title] = 1
+
+    @classmethod
+    def titles_count(cls):
+        return cls.counter
+
+    def how_many_episodes(self):
+        how_many = self.counter[self.title]
+        return how_many
 
     def __str__(self):
         return f'{self.title} S{self.season:02d}E{self.episode:02d}'
 
     def __repr__(self):
-        return f'Series(episode={self.episode}, season={self.season}, title={self.title}, '\
+        return f'Series(episode={self.episode}, season={self.season}, title={self.title}, ' \
                f'publish_year={self.publish_year}, genre={self.genre}, views={self.views})'
 
 
-def fake_movie_library(how_many_items=100):
+def fake_movie_library(movie_library_list, how_many_items=100):
     '''
     a function that adds fake Movie or Series objects to the movie library
+    :param movie_library_list: list
     :param how_many_items: int
     :return: list
     '''
@@ -52,11 +71,10 @@ def fake_movie_library(how_many_items=100):
         'musical', 'remake', 'horror', 'melodrama', 'historical', 'erotic', 'drama', 'action', 'romantic comedy',
         'comedy drama', 'black comedy', 'cartoon', 'cabaret', 'biographical'
     ]
-    _movie_library = []
     while step <= how_many_items:
         selector = random.randint(0, 1)
         if selector == 1:
-            _movie_library.append(Movie(
+            movie_library_list.append(Movie(
                 title=fake.sentence(nb_words=3),
                 publish_year=random.randint(1960, 2020),
                 genre=fake.sentence(ext_word_list=my_genre, nb_words=1)
@@ -75,7 +93,7 @@ def fake_movie_library(how_many_items=100):
                     if step >= how_many_items:
                         break
                     else:
-                        _movie_library.append(Series(
+                        movie_library_list.append(Series(
                             episode=episode,
                             season=season,
                             title=title,
@@ -84,7 +102,7 @@ def fake_movie_library(how_many_items=100):
                         ))
                         year += 1
                         step += 1
-    return _movie_library
+    return movie_library_list
 
 
 def get_movies(movies_library_list):
@@ -174,8 +192,27 @@ def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
         print(f" \n We only have {len(_sorted)} titles in the library.")
 
 
-movie_library = fake_movie_library(50)
+def add_season_to_movie_library(movie_library_list, title, year, genre, episodes, season):
+    '''
+    adds a full season to the movie library
+    :param movie_library_list: list
+    :param title: str
+    :param year: int
+    :param genre: str
+    :param episodes: int
+    :param season: int
+    :return: list
+    '''
+    for episode in range(1, episodes+1):
+        movie_library_list.append(Series(title=title, publish_year=year, genre=genre, season=season, episode=episode))
+    return movie_library_list
+
+
+movie_library = []
+
+fake_movie_library(movie_library, 5)
 
 run_generate_views(movie_library)
-top_titles(movie_library, 15, 1)
+print(movie_library)
+
 
