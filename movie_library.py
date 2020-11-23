@@ -4,7 +4,7 @@ import datetime
 
 
 class Movie:
-    def __init__(self, title, publish_year, genre):
+    def __init__(self, title: str, publish_year: int, genre: str):
         self.title = title
         self.publish_year = publish_year
         self.genre = genre
@@ -29,7 +29,7 @@ class Movie:
 class Series(Movie):
     counter = {}
 
-    def __init__(self, episode, season, *args, **kwargs):
+    def __init__(self, episode: int, season: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.episode = episode
         self.season = season
@@ -58,7 +58,7 @@ class Series(Movie):
                f'publish_year={self.publish_year}, genre={self.genre}, views={self.views})'
 
 
-def fake_movie_library(movie_library_list, how_many_items=100):
+def fake_movie_library(movie_library_list: list, how_many_items=100) -> list:
     '''
     a function that adds fake Movie or Series objects to the movie library
     :param movie_library_list: list
@@ -72,7 +72,7 @@ def fake_movie_library(movie_library_list, how_many_items=100):
         'musical', 'remake', 'horror', 'melodrama', 'historical', 'erotic', 'drama', 'action', 'romantic comedy',
         'comedy drama', 'black comedy', 'cartoon', 'cabaret', 'biographical'
     ]
-    while step <= how_many_items:
+    for item in range(how_many_items):
         selector = random.randint(0, 1)
         if selector == 1:
             movie_library_list.append(Movie(
@@ -101,12 +101,12 @@ def fake_movie_library(movie_library_list, how_many_items=100):
                             publish_year=year,
                             genre=genre
                         ))
-                        year += 1
                         step += 1
+            year += 1
     return movie_library_list
 
 
-def get_movies(movies_library_list):
+def get_movies(movies_library_list: list) -> list:
     '''
     a function that filters the movies_library_list and returns a sorted list of movies
     :param movies_library_list: list
@@ -119,7 +119,7 @@ def get_movies(movies_library_list):
     return sorted(movies_list, key=lambda movie: movie.title)
 
 
-def get_series(movies_library_list):
+def get_series(movies_library_list: list) -> list:
     '''
     a function that filters the movies_library_list and returns a sorted list of series
     :param movies_library_list: list
@@ -132,19 +132,27 @@ def get_series(movies_library_list):
     return sorted(series_list, key=lambda _series: _series.title)
 
 
-def search(title, movies_library_list):
+def search(title: str, movies_library_list: list) -> object:
     '''
-    function that searches for movies or series by title
+     function that searches for movies or series by title
     :param title: str
     :param movies_library_list: list
     :return: object: <class '__main__.Movie'> or <class '__main__.Series'>
     '''
     for item in movies_library_list:
         if item.title.lower() == title.lower():
-            return item
+            if isinstance(item, Series) is True:
+                season = int(input('Który sezon?: '))
+                episode = int(input('Który odcinek?: '))
+                _series = get_series(movies_library_list)
+                for name in _series:
+                    if title.lower() == name.title.lower() and season == name.season and episode == name.episode:
+                        return name
+            else:
+                return item
 
 
-def generate_views(movie_library_list):
+def generate_views(movie_library_list: list) -> None:
     '''
     a function that randomly selects an item from the library and then adds a random (ranging from 1 to 100)
     number of plays
@@ -156,7 +164,7 @@ def generate_views(movie_library_list):
     movie_library_list[index].play(views)
 
 
-def run_generate_views(movie_library_list):
+def run_generate_views(movie_library_list: list) -> None:
     '''
     runs functions generate_vievs 200 times
     :param movie_library_list: list
@@ -168,7 +176,7 @@ def run_generate_views(movie_library_list):
         step += 1
 
 
-def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
+def top_titles(movies_library_list: list, /, how_many_titles=3, content_type=None) -> None:
     '''
     If content_type=None, the function returns the most popular titles from the library.
     If content_type=1, the function returns the most popular movies.
@@ -193,7 +201,9 @@ def top_titles(movies_library_list, /, how_many_titles=3, content_type=None):
         print(f" \n We only have {len(_sorted)} titles in the library.")
 
 
-def add_season_to_movie_library(movie_library_list, title, year, genre, episodes, season):
+def add_season_to_movie_library(
+        movie_library_list: list, title: str, year: int, genre: str, episodes: int, season: int
+) -> list:
     '''
     adds a full season to the movie library
     :param movie_library_list: list
